@@ -1,6 +1,6 @@
 // emails/TicketCommentEmail.tsx
 import { Heading, Text, Link, Section, Button } from "@react-email/components";
-import { EmailLayout } from "@/components/emails/EmailLayouts.tsx";
+import { EmailLayout } from "@/components/emails/EmailLayouts";
 
 type TicketCommentEmailProps = {
   assigneeName: string;
@@ -23,7 +23,8 @@ export const TicketCommentEmail = ({
     </Heading>
     <Text>Hi {assigneeName},</Text>
     <Text>
-      <strong>{commenterName}</strong> added a comment to <strong>{ticketTitle}</strong>.
+      <strong>{commenterName}</strong> added a comment to{" "}
+      <strong>{ticketTitle}</strong>.
     </Text>
     <Section
       style={{
@@ -35,7 +36,7 @@ export const TicketCommentEmail = ({
       }}
     >
       <Text style={{ fontStyle: "italic", color: "#333" }}>
-        "{comment}"
+        &quot;{comment}&quot;
       </Text>
     </Section>
     <Section style={{ textAlign: "center", marginTop: "20px" }}>
@@ -53,7 +54,8 @@ export const TicketCommentEmail = ({
       </Button>
     </Section>
     <Text style={{ marginTop: "20px", fontSize: "14px", color: "#666" }}>
-      If you have questions, <Link href="mailto:support@yourapp.com">contact support</Link>.
+      If you have questions,{" "}
+      <Link href="mailto:support@yourapp.com">contact support</Link>.
     </Text>
   </EmailLayout>
 );

@@ -1,5 +1,7 @@
 'use client';
 
+import Image from "next/image";
+
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronUp, ChevronDown } from "lucide-react";
@@ -163,11 +165,15 @@ export default function ChangeTicketStatusPage() {
                 {image && (
                   <div>
                     <h4 className="text-sm font-semibold text-gray-500">Image</h4>
-                    <img
-                      src={image}
-                      alt="Ticket"
-                      className="w-32 h-24 object-cover rounded-lg"
-                      loading="lazy"
+                   
+
+                    <Image 
+                    src={image}
+                    alt="Ticket"
+                    width={128}
+                    height={96}
+                    className="w-32 h-24 object-cover rounded-lg"
+                    
                     />
                   </div>
                 )}

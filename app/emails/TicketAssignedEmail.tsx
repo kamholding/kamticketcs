@@ -1,5 +1,5 @@
 // emails/TicketAssignedEmail.tsx
-import { EmailLayout } from "@/components/emails/EmailLayouts.tsx";
+import { EmailLayout } from "@/components/emails/EmailLayouts";
 import { Heading, Text } from "@react-email/components";
 
 type TicketAssignedEmailProps = {

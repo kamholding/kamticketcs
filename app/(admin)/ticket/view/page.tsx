@@ -224,7 +224,8 @@ const Page = () => {
                   <div className="grid grid-cols-2 gap-4">
                     {[
                       ['Date', date],
-                      ['Assigned To', assignedTo],
+                      ['Assigned To', usersMap[assignedTo as unknown as number] ?? assignedTo],
+
                       ['Status', status],
                       ['Created By', createdBy],
                       ['Department', department],

@@ -1,6 +1,6 @@
 // emails/TicketResolvedEmail.tsx
 import { Heading, Text, Section } from "@react-email/components";
-import { EmailLayout } from "@/components/emails/EmailLayouts.tsx";
+import { EmailLayout } from "@/components/emails/EmailLayouts";
 
 export const TicketResolvedEmail = ({
   name,

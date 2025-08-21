@@ -1,15 +1,18 @@
+// app/(client)/track-ticket/page.tsx
 'use client';
 
 import React, { useState } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
+import { Ticket, Comment } from '@/app/type';
+import Image from 'next/image';
 
 export default function TrackTicketPage() {
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
-  const [tickets, setTickets] = useState([]);
+  const [tickets, setTickets] = useState<Ticket[]>([]);
   const [loading, setLoading] = useState(false);
   const [openTickets, setOpenTickets] = useState<{ [key: string]: boolean }>({});
-  const [comments, setComments] = useState<{ [key: string]: any[] }>({});
+  const [comments, setComments] = useState<{ [key: string]: Comment[] }>({});
   const [newComments, setNewComments] = useState<{ [key: string]: string }>({});
 
   const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -29,16 +32,16 @@ export default function TrackTicketPage() {
       const url = `${API_BASE}/tickets/by-email/${encodeURIComponent(email)}`;
       const response = await fetch(url);
       if (!response.ok) throw new Error(`Error fetching tickets: ${response.status}`);
-      const data = await response.json();
+      const data: Ticket[] = await response.json();
       setTickets(data);
 
       const expandedMap: { [key: string]: boolean } = {};
-      data.forEach((ticket: any) => {
+      data.forEach((ticket: Ticket) => {
         expandedMap[ticket.id] = true;
-        fetchComments(ticket.id);
+        fetchComments(ticket.id.toString());
       });
       setOpenTickets(expandedMap);
-    } catch (err) {
+    } catch {
       setError('Could not fetch tickets. Please try again.');
       setTickets([]);
       setOpenTickets({});
@@ -50,7 +53,7 @@ export default function TrackTicketPage() {
   const fetchComments = async (ticketId: string) => {
     try {
       const res = await fetch(`${API_BASE}/comments/${ticketId}`);
-      const data = await res.json();
+      const data: Comment[] = await res.json();
       setComments((prev) => ({ ...prev, [ticketId]: data }));
     } catch (err) {
       console.error('Failed to load comments', err);
@@ -62,54 +65,55 @@ export default function TrackTicketPage() {
   };
 
   const handleAddComment = async (ticketId: string) => {
-    const content = newComments[ticketId];
-    if (!content?.trim()) return;
+  const content = newComments[ticketId];
+  if (!content?.trim()) return;
 
-    try {
-      // Post comment
-      const res = await fetch(`${API_BASE}/comments`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ticket_id: ticketId, content }),
-      });
+  try {
+    const res = await fetch(`${API_BASE}/comments`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ticket_id: ticketId, content }),
+    });
 
-      if (!res.ok) throw new Error('Failed to post comment');
+    if (!res.ok) throw new Error('Failed to post comment');
 
-      setNewComments((prev) => ({ ...prev, [ticketId]: '' }));
-      await fetchComments(ticketId);
+    setNewComments((prev) => ({ ...prev, [ticketId]: '' }));
+    await fetchComments(ticketId);
 
-      // Fetch ticket info
-      const ticketRes = await fetch(`${API_BASE}/tickets/${ticketId}`);
-      const ticketData = await ticketRes.json();
+    // ✅ Fetch fresh ticket details so we can email the assignee
+    const ticketRes = await fetch(`${API_BASE}/tickets/${ticketId}`);
+    const ticketData: Ticket = await ticketRes.json();
 
-      const assigneeName = ticketData?.assignee?.name || 'Assignee';
-      const assigneeEmail = ticketData?.assignee?.email || 'tosinolororo2000@gmail.com';
-      const commenterName = email;
-      const ticketTitle = ticketData?.title || 'Untitled Ticket';
-      const ticketLink = `${window.location.origin}/dashboard/tickets/${ticketId}`;
+    // ✅ No more `any` — using the Ticket type with optional assignee
+    const assigneeName = ticketData.assignee?.name || 'Assignee';
+    const assigneeEmail = ticketData.assignee?.email || 'tosinolororo2000@gmail.com';
 
-      // Send email
-      await fetch('/api/emails', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          sender: { name: 'Support Bot', address: 'no-reply@yourapp.com' },
-          reciepients: [{ name: assigneeName, address: assigneeEmail }],
-          subject: `New comment on ticket: ${ticketTitle}`,
-          template: 'ticket_comment',
-          templateData: {
-            assigneeName,
-            commenterName,
-            ticketTitle,
-            comment: content,
-            ticketLink,
-          },
-        }),
-      });
-    } catch (err) {
-      console.error('Error posting comment or sending email', err);
-    }
-  };
+    const commenterName = email;
+    const ticketTitle = ticketData.title || 'Untitled Ticket';
+    const ticketLink = `${window.location.origin}/dashboard/tickets/${ticketId}`;
+
+    await fetch('/api/emails', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        sender: { name: 'Support Bot', address: 'no-reply@yourapp.com' },
+        reciepients: [{ name: assigneeName, address: assigneeEmail }],
+        subject: `New comment on ticket: ${ticketTitle}`,
+        template: 'ticket_comment',
+        templateData: {
+          assigneeName,
+          commenterName,
+          ticketTitle,
+          comment: content,
+          ticketLink,
+        },
+      }),
+    });
+  } catch (err) {
+    console.error('Error posting comment or sending email', err);
+  }
+};
+
 
   const toggleTicket = (id: string) => {
     const nextState = !openTickets[id];
@@ -151,11 +155,14 @@ export default function TrackTicketPage() {
         )}
 
         <div className="grid grid-cols-1 gap-6">
-          {tickets.map((ticket: any) => (
-            <div key={ticket.id} className="bg-white dark:bg-gray-800 rounded-2xl shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden">
+          {tickets.map((ticket: Ticket) => (
+            <div
+              key={ticket.id}
+              className="bg-white dark:bg-gray-800 rounded-2xl shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden"
+            >
               <div className="flex items-center justify-between px-6 py-4 bg-gray-100 dark:bg-gray-700 border-b border-gray-300 dark:border-gray-600">
                 <h3 className="text-xl font-semibold text-gray-800 dark:text-white capitalize">{ticket.title}</h3>
-                <button onClick={() => toggleTicket(ticket.id)} className="text-gray-500 hover:text-gray-700 dark:hover:text-white">
+                <button onClick={() => toggleTicket(ticket.id.toString())} className="text-gray-500 hover:text-gray-700 dark:hover:text-white">
                   {openTickets[ticket.id] ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
                 </button>
               </div>
@@ -165,7 +172,7 @@ export default function TrackTicketPage() {
                   {/* Details */}
                   <div>
                     <h4 className="text-sm font-semibold text-gray-500 dark:text-gray-300">Details</h4>
-                    <p className="text-base text-gray-700 dark:text-gray-200">{ticket.details}</p>
+                    <p className="text-base text-gray-700 dark:text-gray-200">{ticket.description}</p>
                   </div>
 
                   {/* Info */}
@@ -188,9 +195,11 @@ export default function TrackTicketPage() {
                   {ticket.image && (
                     <div>
                       <h4 className="text-sm font-semibold text-gray-500 dark:text-gray-300">Image</h4>
-                      <img
+                      <Image
                         src={ticket.image}
                         alt="Ticket"
+                        width={160}
+                        height={112}
                         className="w-40 h-28 object-cover rounded-lg border dark:border-gray-700"
                       />
                     </div>
@@ -217,12 +226,12 @@ export default function TrackTicketPage() {
                       <input
                         type="text"
                         value={newComments[ticket.id] || ''}
-                        onChange={(e) => handleCommentChange(ticket.id, e.target.value)}
+                        onChange={(e) => handleCommentChange(ticket.id.toString(), e.target.value)}
                         placeholder="Add a comment"
                         className="flex-1 px-3 py-1.5 rounded border dark:bg-gray-700 dark:text-white"
                       />
                       <button
-                        onClick={() => handleAddComment(ticket.id)}
+                        onClick={() => handleAddComment(ticket.id.toString())}
                         className="bg-blue-600 text-white px-3 py-1.5 rounded hover:bg-blue-700"
                       >
                         Post

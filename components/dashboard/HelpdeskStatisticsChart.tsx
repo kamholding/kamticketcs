@@ -61,11 +61,13 @@ export default function HelpdeskStatisticsChart() {
   // Resize handler
   useEffect(() => {
     if (!containerRef.current) return;
-    const observer = new ResizeObserver(entries => {
-      for (let entry of entries) {
+
+    const observer = new ResizeObserver((entries: ResizeObserverEntry[]) => {
+      for (const entry of entries) {
         setWidth(entry.contentRect.width);
       }
     });
+
     observer.observe(containerRef.current);
     return () => observer.disconnect();
   }, []);
@@ -81,7 +83,6 @@ export default function HelpdeskStatisticsChart() {
   const buildAreaPath = (key: "opened" | "resolved") => {
     if (!chartData.length) return "";
     const topLine = chartData.map((d, i) => `${i === 0 ? "M" : "L"} ${scaleX(i)} ${scaleY(d[key])}`).join(" ");
-    const bottomLine = chartData.map((_, i) => `${scaleX(chartData.length - 1 - i)} ${scaleY(0)}`).join(" L ");
     return `${topLine} L ${scaleX(chartData.length - 1)} ${scaleY(0)} L ${scaleX(0)} ${scaleY(0)} Z`;
   };
 

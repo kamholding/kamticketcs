@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
@@ -134,11 +135,16 @@ export default function AssignTicket() {
                         <tr>
                           <td className="font-medium bg-gray-50 p-3">Image</td>
                           <td className="p-3">
-                            <img
+      
+
+                            <Image
                               src={selectedTicketDetails.image}
                               alt="Ticket"
-                              className="w-24 rounded"
+                              width={96} // 24 * 4 (tailwind units)
+                              height={96}
+                              className="rounded"
                             />
+
                           </td>
                         </tr>
                       )}

@@ -1,17 +1,15 @@
 'use client'
 
 import Link from 'next/link';
-
-
 import { useState } from 'react';
 
 export default function Login() {
   const [form, setForm] = useState({ email: '', password: '' });
   const [error, setError] = useState<string | null>(null);
 
-  const handleLogin = async (e: any) => {
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setError(null);  // Reset error state before making request
+    setError(null);
 
     if (!form.email || !form.password) {
       setError('Both fields are required.');
@@ -28,11 +26,7 @@ export default function Login() {
     if (res.ok) {
       localStorage.setItem('token', data.token);
       alert(`Welcome ${data.user.name}`);
-
       window.location.href = "/home";
-
-
-      // Redirect to home or other protected routes
     } else {
       setError(data.message || 'Login failed');
     }
@@ -41,7 +35,9 @@ export default function Login() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50">
       <div className="w-full max-w-md p-8 bg-white rounded-lg shadow-md">
-        <h2 className="text-2xl font-semibold text-center text-gray-700 mb-6">Login to Your Account</h2>
+        <h2 className="text-2xl font-semibold text-center text-gray-700 mb-6">
+          Login to Your Account
+        </h2>
 
         {error && <div className="bg-red-100 text-red-700 p-3 rounded mb-4">{error}</div>}
 
@@ -79,10 +75,10 @@ export default function Login() {
         </form>
 
         <p className="mt-4 text-center text-sm text-gray-500">
-          Don't have an account?{' '}
-            <Link href="/signup" className="text-indigo-600 hover:text-indigo-800">
-                Sign up
-            </Link>
+          Don&apos;t have an account?{' '}
+          <Link href="/signup" className="text-indigo-600 hover:text-indigo-800">
+            Sign up
+          </Link>
         </p>
       </div>
     </div>

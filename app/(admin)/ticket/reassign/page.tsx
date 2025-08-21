@@ -5,22 +5,10 @@ import { useRouter } from 'next/navigation';
 import { Listbox } from '@headlessui/react';
 import { useAuth } from '@/hooks/useAuth';
 import { handleReassignUser } from './utils/reassignUtils';
+import { User, Ticket } from '@/app/type';
+import Image from 'next/image';
 
-interface User {
-  id: number;
-  name: string;
-  email: string;
-  role: string;
-}
 
-interface Ticket {
-  id: number;
-  title: string;
-  subcategory: string;
-  description: string;
-  image?: string;
-  assigned_to: number | null;
-}
 
 const fetchReassignData = async (): Promise<{ users: User[]; tickets: Ticket[] }> => {
   const [userResponse, ticketResponse] = await Promise.all([
@@ -126,7 +114,7 @@ export default function ReassignTicket() {
                       </tr>
                       <tr className="border-b">
                         <td className="font-medium bg-gray-50 p-3">Subcategory</td>
-                        <td className="p-3">{selectedTicketDetails.subcategory}</td>
+                        <td className="p-3">{selectedTicketDetails.subCategory}</td>
                       </tr>
                       <tr>
                         <td className="font-medium bg-gray-50 p-3">Description</td>
@@ -136,11 +124,15 @@ export default function ReassignTicket() {
                         <tr>
                           <td className="font-medium bg-gray-50 p-3">Image</td>
                           <td className="p-3">
-                            <img
-                              src={selectedTicketDetails.image}
-                              alt="Ticket"
-                              className="w-24 rounded"
+                            
+                            <Image 
+                            src={selectedTicketDetails.image}
+                            alt="Ticket"
+
+                            className="w-24 rounded"
                             />
+
+
                           </td>
                         </tr>
                       )}
@@ -223,21 +215,22 @@ export default function ReassignTicket() {
 
             {/* Submit Button */}
             <div className="md:col-span-2">
-              <button
-                className="w-full bg-green-600 hover:bg-green-700 text-white text-lg py-3 font-semibold rounded-lg disabled:opacity-50"
-                onClick={() =>
-                  handleReassignUser({
-                    selectedTicket: selectedTicket?.id,
-                    selectedUser: selectedUser?.id,
-                    setMessage,
-                    tickets,
-                    users,
-                  })
-                }
-                disabled={!selectedTicket || !selectedUser}
-              >
-                Reassign Ticket
-              </button>
+            <button
+              className="w-full bg-green-600 hover:bg-green-700 text-white text-lg py-3 font-semibold rounded-lg disabled:opacity-50"
+              onClick={() =>
+                handleReassignUser({
+                  selectedTicket: selectedTicket?.id,
+                  selectedUser: selectedUser?.id,
+                  setMessage,
+                  tickets,
+                  users, // ✅ add this
+                })
+              }
+              disabled={!selectedTicket || !selectedUser}
+            >
+              Reassign Ticket
+            </button>
+
             </div>
           </div>
         )}

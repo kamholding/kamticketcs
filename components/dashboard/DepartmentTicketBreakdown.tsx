@@ -31,7 +31,6 @@ export default function DepartmentTicketBreakdown() {
 
   // Chart dimensions
   const chartWidth = 500;
-  const chartHeight = 300;
   const barHeight = 30;
   const gap = 10;
   const maxValue = Math.max(...data.map(d => d.ticketCount), 0);
