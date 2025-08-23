@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
-import { handleAssignUser } from './utils/handleAssignUser';
+import { handleAssignUser } from '../../../../components/utils/handleAssignUser';
 import { Listbox } from '@headlessui/react';
 
 // ✅ Define proper types

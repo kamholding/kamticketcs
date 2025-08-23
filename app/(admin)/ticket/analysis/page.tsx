@@ -23,7 +23,7 @@ export default function HelpdeskDashboard() {
     if (!authLoading) {
       if (!user) {
         router.replace("/unauthorized");
-      } else if (user.role !== "Superadmin") {
+      } else if (user.role !== "GM" && user.role !== "Manager") {
         router.replace("/unauthorized");
       }
     }

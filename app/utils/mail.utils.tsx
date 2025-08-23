@@ -1,3 +1,5 @@
+//C:\Next\kam\kam_ticket_latest\app\utils\mail.utils.tsx
+
 import { render } from "@react-email/render";
 import React from "react";
 import nodemailer from "nodemailer";
@@ -9,6 +11,7 @@ import { TicketSubmissionEmail } from "../emails/TicketSubmissionEmail";
 import { TicketAssignedEmail } from "../emails/TicketAssignedEmail";
 import { TicketResolvedEmail } from "../emails/TicketResolvedEmail";
 import { TicketCommentEmail } from "../emails/TicketCommentEmail";
+import { TicketReassignedEmail } from "../emails/TicketReassignedEmail";
 
 interface TemplateDataMap {
   welcome: { name: string };
@@ -16,6 +19,7 @@ interface TemplateDataMap {
   ticket_assigned: { name: string; title: string; assignedBy: string; ticketId: string };
   ticket_resolved: { name: string; title: string; ticketId: string; resolvedBy: string };
   ticket_comment: { assigneeName: string; commenterName: string; ticketTitle: string; comment: string; ticketLink: string };
+   ticket_reassigned: { name: string; title: string; reassignedBy: string; ticketId: string }; 
 }
 
 type TemplateKey = keyof TemplateDataMap;
@@ -84,6 +88,18 @@ case "ticket_resolved": {
         htmlContent = await render(<TicketCommentEmail {...data} />);
         break;
       }
+
+      case "ticket_reassigned": {
+        const data = templateData as TemplateDataMap["ticket_reassigned"];
+        htmlContent = await render(
+          <TicketReassignedEmail
+            {...data}
+            ticketId={Number(data.ticketId)}
+          />
+        );
+        break;
+      }
+
     }
 
     console.log(

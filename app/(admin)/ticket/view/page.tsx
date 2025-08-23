@@ -2,9 +2,10 @@
 import Image from "next/image";
 import React, { useState, useEffect, ChangeEvent, useRef, useMemo, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { ChevronDown, ChevronUp } from 'lucide-react'
+import { ChevronDown, ChevronUp, Users } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
-import { handleAssignUser } from "@/app/(admin)/ticket/assign/utils/handleAssignUser";
+import { handleAssignUser } from "@/components/utils/handleAssignUser";
+import { handleReassignUser } from "@/components/utils/handleReassignUser";
 
 
 type Comment = {
@@ -14,7 +15,6 @@ type Comment = {
   isAdmin: boolean
   created_at: string
 }
-
 
 type Ticket = {
   id: number
@@ -34,8 +34,10 @@ type Ticket = {
 }
 
 type User = {
-  id: number
-  name: string
+  id: number;
+  name: string;
+  email: string;
+  role: string;
 }
 
 type BackendTicket = {
@@ -71,6 +73,8 @@ const handleChangeStatus = (ticketId: number, newStatus: string) => {
   const [statusUpdates, setStatusUpdates] = useState<{ [id: number]: string }>({});
   const [message, setMessage] = useState<string>('');
   const [assignMessage, setAssignMessage] = useState<string>('');
+  const [users, setUsers] = useState<User[]>([]);
+
   const [comments, setComments] = useState<Record<number, Comment[]>>({})
 const [newComments, setNewComments] = useState<Record<number, string>>({})
 
@@ -106,6 +110,7 @@ const [newComments, setNewComments] = useState<Record<number, string>>({})
         ])
 
         const users: User[] = await userRes.json()
+        setUsers(users);
         const rawTickets: BackendTicket[] = await ticketRes.json()
 
         const userMap = Object.fromEntries(users.map(u => [u.id, u.name]))
@@ -166,8 +171,7 @@ if (processed.length > 0) {
 
       // clear local selection after save
       setSelectedUsers(prev => ({ ...prev, [ticketId]: "" }))
-
-        router.refresh(); // ✅ Next.js 13+ client-side refresh
+      
     } catch (err) {
       console.error("Error assigning ticket:", err)
     }
@@ -190,35 +194,37 @@ const toggleCard = (id: number) => {
 }
 
 
-  const handleStatusChange = async (id: number) => {
-    try {
-      const status = statusUpdates[id];
-      if (!status) return;
+ const handleStatusChange = async (id: number) => {
+  try {
+    const status = statusUpdates[id];
+    if (!status) return;
 
-      const res = await fetch(`http://localhost:5000/api/tickets/${id}/status`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status }),
-      });
+    // 👇 Optimistic update first
+    setTickets((prevTickets) =>
+      prevTickets.map((ticket) =>
+        ticket.id === id ? { ...ticket, status } : ticket
+      )
+    );
 
-      if (!res.ok) throw new Error("Failed to update status");
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/tickets/${id}/status`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status }),
+    });
 
-      setTickets((prevTickets) =>
-        prevTickets.map((ticket) =>
-          ticket.id === id ? { ...ticket, status } : ticket
-        )
-      );
+    if (!res.ok) throw new Error("Failed to update status");
 
-      setStatusUpdates((prev) => ({ ...prev, [id]: "" }));
-      setMessage(`✅ Ticket ${id} updated to "${status}".`);
-      setError("");
-        router.refresh(); // ✅ Next.js 13+ client-side refresh
-    } catch (err) {
-      console.error(err);
-      setError(`❌ Failed to update ticket ${id}.`);
-      setMessage("");
-    }
-  };
+    setStatusUpdates((prev) => ({ ...prev, [id]: "" }));
+    setMessage(`✅ Ticket ${id} updated to "${status}".`);
+    setError("");
+  } catch (err) {
+    console.error(err);
+    setError(`❌ Failed to update ticket ${id}.`);
+    setMessage("");
+  }
+};
+
+
 
   const handleAddComment = async (ticketId: number) => {
   const content = newComments[ticketId]
@@ -428,9 +434,7 @@ const toggleCard = (id: number) => {
       </div>
 
       {/* RIGHT SIDE */}
-      <div className="space-y-8">
-       
-
+      <div className="space-y-8">    
 
 {(user?.role === "GM" || user?.role === "Manager") && (
   <div className="space-y-3">
@@ -457,26 +461,32 @@ const toggleCard = (id: number) => {
     </select>
 {selectedUser && (
   <button
-    onClick={() =>
-      handleAssignUser({
-        selectedTicket: id,
-        selectedUser: Number(selectedUser),
-        setMessage: setAssignMessage, //error: 
-        tickets: tickets,    // your tickets state
-        users: Object.entries(usersMap).map(([id, name]) => ({
-          id: Number(id),
-          name,
-          email: "", // Add emails if you have them in usersMap or fetch them separately
-          role: "",  // optional
-        })),
-      })
-    }
+    onClick={() => {
+      if (assignedTo === "Unassigned") {
+        // Assign
+        handleAssignUser({
+          selectedTicket: id,
+          selectedUser: Number(selectedUser),
+          setMessage: setAssignMessage,
+          tickets: tickets,
+          users: users,
+        });
+      } else {
+        // Reassign
+        handleReassignUser({
+          selectedTicket: id,
+          selectedUser: Number(selectedUser),
+          setMessage: setAssignMessage,
+          tickets: tickets,
+          users: users,
+        });
+      }
+    }}
     className="inline-flex items-center px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium shadow hover:bg-blue-700 transition-colors"
   >
-    Save
+    {assignedTo === "Unassigned" ? "Assign" : "Reassign"}
   </button>
 )}
-
   </div>
 )}
 
