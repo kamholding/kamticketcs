@@ -2,6 +2,7 @@ export interface User {
   id: number;
   name: string;
   email: string;
+  phone?: number | null;
   role: string;
 }
 
@@ -10,6 +11,7 @@ export interface Ticket {
   title: string;
   description: string;
   subCategory?: string;
+  otherSubCategory?: string;
   category?: string;
   status?: string;
   department?: string;
@@ -17,6 +19,7 @@ export interface Ticket {
   created_at: string;
   image?: string;
   assigned_to: number | null;
+  
 
   // 👇 Add this if API includes assignee details
   assignee?: User | null;
@@ -28,4 +31,5 @@ export interface Comment {
   content: string;
   created_at: string;
   author?: string;
+   isAdmin?: boolean;
 }

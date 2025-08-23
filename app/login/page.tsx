@@ -26,7 +26,7 @@ export default function Login() {
     if (res.ok) {
       localStorage.setItem('token', data.token);
       alert(`Welcome ${data.user.name}`);
-      window.location.href = "/home";
+      window.location.href = "/dashboard"; // Redirect to dashboard
     } else {
       setError(data.message || 'Login failed');
     }

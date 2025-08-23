@@ -141,7 +141,7 @@ const CreateTicket: React.FC = () => {
                     image: null,
                 });
 
-                router.push('/home');
+                router.push('/ticket/view');
             } else {
                 alert("Error: " + data.error);
             }

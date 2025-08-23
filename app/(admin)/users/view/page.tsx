@@ -45,7 +45,7 @@ export default function ViewUsers() {
   const router = useRouter();
 
   useEffect(() => {
-    if (user && user.role !== 'Superadmin') {
+    if (user && user.role !== 'GM' && user.role !== 'Manager') {
       toast.error('Unauthorized access');
       router.push('/unauthorized');
     }

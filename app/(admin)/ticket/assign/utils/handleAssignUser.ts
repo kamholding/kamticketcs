@@ -10,7 +10,8 @@ interface User {
 interface Ticket {
   id: number;
   title: string;
-  subcategory: string;
+  subcategory?: string;
+  subCategory?: string;
   details: string;
   image?: string;
 }
@@ -32,6 +33,7 @@ export const handleAssignUser = async ({
 }: HandleAssignUserParams): Promise<void> => {
   if (!selectedTicket || !selectedUser) {
     setMessage("Please select both a ticket and a user.");
+    console.log("❌ Missing ticket or user selection."); // ✅ log to terminal
     return;
   }
 
@@ -46,7 +48,9 @@ export const handleAssignUser = async ({
     );
 
     if (!response.ok) throw new Error("Failed to assign user to ticket.");
+
     setMessage("User assigned to ticket successfully.");
+    console.log(`✅ Ticket ${selectedTicket} assigned to user ${selectedUser}.`); // ✅ log to terminal
 
     const userDetails = users.find((u) => u.id === selectedUser);
     const ticketDetails = tickets.find((t) => t.id === selectedTicket);
@@ -81,7 +85,7 @@ export const handleAssignUser = async ({
       if (!emailResponse.ok) {
         console.error("❌ Email failed:", emailResult.error);
       } else {
-        console.log("✅ Email sent:", emailResult);
+        console.log(`✅ Email sent to ${userDetails.email} for ticket ${ticketDetails.id}.`);
       }
     } else {
       console.warn("❌ No email found for selected user or ticket.");
@@ -89,8 +93,11 @@ export const handleAssignUser = async ({
   } catch (err) {
     if (err instanceof Error) {
       setMessage(err.message);
+      console.error("❌ Error in handleAssignUser:", err.message);
     } else {
       setMessage("An unknown error occurred.");
+      console.error("❌ Unknown error in handleAssignUser");
     }
   }
 };
+
