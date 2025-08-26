@@ -49,7 +49,9 @@ export const handleAssignUser = async ({
 
     if (!response.ok) throw new Error("Failed to assign user to ticket.");
 
-    setMessage("User assigned to ticket successfully.");
+    // setMessage("User assigned to ticket successfully.");
+   setMessage(`✅ Ticket ${selectedTicket} assigned to user ${selectedUser}.`); // ✅ log to terminal
+
     console.log(`✅ Ticket ${selectedTicket} assigned to user ${selectedUser}.`); // ✅ log to terminal
 
     const userDetails = users.find((u) => u.id === selectedUser);

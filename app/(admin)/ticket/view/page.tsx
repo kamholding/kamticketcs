@@ -6,6 +6,7 @@ import { ChevronDown, ChevronUp, Users } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
 import { handleAssignUser } from "@/components/utils/handleAssignUser";
 import { handleReassignUser } from "@/components/utils/handleReassignUser";
+import { handleResolveTicket } from "@/components/utils/handleResolveTicket";
 
 
 type Comment = {
@@ -85,6 +86,15 @@ const [newComments, setNewComments] = useState<Record<number, string>>({})
 
   // ✅ new: track selected assignees for each ticket
   const [selectedUsers, setSelectedUsers] = useState<Record<number, string>>({})
+
+  // ⬇️ auto clear assignMessage after 5s
+useEffect(() => {
+  if (assignMessage) {
+    const timer = setTimeout(() => setAssignMessage(""), 5000);
+    return () => clearTimeout(timer);
+  }
+}, [assignMessage]);
+
 
   // Resize listener
   useEffect(() => {
@@ -217,10 +227,24 @@ const toggleCard = (id: number) => {
     setStatusUpdates((prev) => ({ ...prev, [id]: "" }));
     setMessage(`✅ Ticket ${id} updated to "${status}".`);
     setError("");
+    // ✅ If resolved, send notification email
+    if (status === "Resolved") {
+  const ticket = tickets.find((t) => t.id === id);
+  console.log("🔍 Trying to resolve ticket:", ticket);
+
+  const assignedUser = users.find((u) => u.name === ticket?.assignedTo);
+  console.log("👤 Assigned user found:", assignedUser);
+
+  if (ticket && assignedUser) {
+    await handleResolveTicket(ticket.id, assignedUser, ticket.title);
+  }
+}
+
   } catch (err) {
     console.error(err);
     setError(`❌ Failed to update ticket ${id}.`);
     setMessage("");
+
   }
 };
 
@@ -303,6 +327,13 @@ const toggleCard = (id: number) => {
   }, [tickets, filters])
 
   return (
+    <>
+
+    {assignMessage && <div className="toast toast-success top-20">{assignMessage}</div>}
+    {message && <div className="toast toast-success top-32">{message}</div>}
+    {error && <div className="toast toast-error top-32">{error}</div>}
+
+    
     <div className="container mx-auto p-6 max-w-3xl space-y-6">
       {/* Filters */}
       <div
@@ -461,32 +492,54 @@ const toggleCard = (id: number) => {
     </select>
 {selectedUser && (
   <button
-    onClick={() => {
+    onClick={async () => {
       if (assignedTo === "Unassigned") {
         // Assign
-        handleAssignUser({
+        await handleAssignUser({
           selectedTicket: id,
           selectedUser: Number(selectedUser),
           setMessage: setAssignMessage,
           tickets: tickets,
           users: users,
         });
+
+        // 🔥 Optimistically update ticket state so button flips to Reassign
+        setTickets((prev) =>
+          prev.map((t) =>
+            t.id === id
+              ? { ...t, assignedTo: usersMap[Number(selectedUser)] }
+              : t
+          )
+        );
       } else {
         // Reassign
-        handleReassignUser({
+        await handleReassignUser({
           selectedTicket: id,
           selectedUser: Number(selectedUser),
           setMessage: setAssignMessage,
           tickets: tickets,
           users: users,
         });
+
+        // 🔥 Update local state after reassign as well
+        setTickets((prev) =>
+          prev.map((t) =>
+            t.id === id
+              ? { ...t, assignedTo: usersMap[Number(selectedUser)] }
+              : t
+          )
+        );
       }
+
+      // reset select box
+      setSelectedUsers((prev) => ({ ...prev, [id]: "" }));
     }}
     className="inline-flex items-center px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium shadow hover:bg-blue-700 transition-colors"
   >
     {assignedTo === "Unassigned" ? "Assign" : "Reassign"}
   </button>
 )}
+
   </div>
 )}
 
@@ -594,6 +647,8 @@ const toggleCard = (id: number) => {
 </div>
 
     </div>
+
+    </>
   )
 }
 

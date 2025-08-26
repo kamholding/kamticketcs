@@ -27,7 +27,8 @@ export const handleReassignUser = async ({
     if (!response.ok) throw new Error("Failed to reassign user to ticket.");
 
     setMessage("Ticket reassigned successfully.");
-    console.log(`🔄 Ticket ${selectedTicket} reassigned to user ${selectedUser}.`);
+   setMessage(`🔄 Ticket ${selectedTicket} reassigned to user ${selectedUser}.`);
+     console.log(`🔄 Ticket ${selectedTicket} reassigned to user ${selectedUser}.`);
 
     const userDetails = users.find((u) => u.id === selectedUser);
     const ticketDetails = tickets.find((t) => t.id === selectedTicket);

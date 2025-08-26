@@ -3,15 +3,23 @@
 import { useEffect, useState } from "react";
 import { Dialog } from "@headlessui/react";
 import toast from "react-hot-toast";
+import { exportToExcel } from "@/components/utils/exportExcel"; // adjust path
 
 interface Ticket {
   id: number;
-  title: string;
+  name: string;
+  email: string;
+  assigned_to: string | null;
+  phone: string;
+  location: string;
   department: string;
   status: string;
-  created_at: string;
   category: string;
-  assigned_to: string | null;
+  subCategory: string;
+  otherSubCategory: string | null;
+  title: string;
+  details: string;
+  created_at: string;
 }
 
 export default function RecentTicketsTable() {
@@ -56,11 +64,55 @@ export default function RecentTicketsTable() {
     }
   };
 
+  const handleExport = async () => {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/tickets`
+    );
+    if (!response.ok) throw new Error("Failed to fetch tickets for export");
+
+    const allTickets: Ticket[] = await response.json();
+
+    const formattedData = allTickets.map((t) => ({
+      ID: t.id,
+      Name: t.name,
+      Email: t.email,
+      "Assigned To": t.assigned_to || "Unassigned",
+      Phone: t.phone,
+      Location: t.location,
+      Department: t.department,
+      Status: t.status,
+      Category: t.category,
+      SubCategory: t.subCategory,
+      "Other SubCategory": t.otherSubCategory,
+      Title: t.title,
+      Details: t.details,
+      // 🚫 Excluding image field
+      "Created At": new Date(t.created_at).toLocaleString(),
+    }));
+
+    exportToExcel(formattedData, "all_tickets.xlsx");
+  } catch (err) {
+    console.error(err);
+    toast.error("Unable to export tickets.");
+  }
+};
+
+
+
   return (
     <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-md dark:border-gray-800 dark:bg-gray-900">
-      <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
-        Recent Tickets
-      </h3>
+      <div className="flex justify-between items-center mb-4">
+  <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
+    Recent Tickets
+  </h3>
+  <button
+    onClick={handleExport}
+    className="px-4 py-2 text-sm rounded-lg bg-blue-600 text-white hover:bg-blue-700"
+  >
+    Export Excel
+  </button>
+</div>
       <p className="mt-1 text-gray-500 text-sm dark:text-gray-400">
         Overview of most recently submitted tickets
       </p>
