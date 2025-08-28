@@ -6,14 +6,11 @@ import { useAuth } from '@/hooks/useAuth';
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
-  PlusCircle,
   ClipboardList,
   UserPlus,
   Users,
   BarChart3,
-  Activity,
-  Settings,
-  LayoutDashboard
+  
 } from "lucide-react";
 import React from "react";
 
@@ -41,12 +38,6 @@ const ActionCard = ({
   </Link>
 );
 
-const featuresList = [
-  { title: "Instant Ticket Logging", desc: "Users and public visitors can report issues quickly using a simple form.", icon: PlusCircle },
-  { title: "Intuitive Tracking", desc: "Track ticket progress with real-time status and color-coded timelines.", icon: Activity },
-  { title: "Role-Based Management", desc: "Superadmins and admins can assign, reassign, and update tickets effortlessly.", icon: Settings },
-  { title: "Visual Insights", desc: "Get powerful analytics on ticket trends, resolution speed, and team performance.", icon: LayoutDashboard },
-];
 
 export default function Dashboard() {
   const { user, loading } = useAuth();

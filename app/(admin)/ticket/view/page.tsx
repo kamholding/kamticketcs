@@ -1,8 +1,8 @@
 'use client'
-import Image from "next/image";
+
 import React, { useState, useEffect, ChangeEvent, useRef, useMemo, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { ChevronDown, ChevronUp, Users } from 'lucide-react'
+import { ChevronDown, ChevronUp } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
 import { handleAssignUser } from "@/components/utils/handleAssignUser";
 import { handleReassignUser } from "@/components/utils/handleReassignUser";
@@ -65,10 +65,10 @@ const Page = () => {
 
   const [usersMap, setUsersMap] = useState<Record<number, string>>({})
   const [tickets, setTickets] = useState<Ticket[]>([])
-const handleChangeStatus = (ticketId: number, newStatus: string) => {
-  // 🔑 call your backend here to update status
-  console.log("Change status", ticketId, newStatus);
-};
+// const handleChangeStatus = (ticketId: number, newStatus: string) => {
+//   // 🔑 call your backend here to update status
+//   console.log("Change status", ticketId, newStatus);
+// };
   const [openTickets, setOpenTickets] = useState<Record<number, boolean>>({})
   const [filtersOpen, setFiltersOpen] = useState(false)
   const [statusUpdates, setStatusUpdates] = useState<{ [id: number]: string }>({});
@@ -159,33 +159,33 @@ if (processed.length > 0) {
     fetchData()
   }, [user])
 
-  const handleAssignTicket = async (ticketId: number, userId: number) => {
-    try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/tickets/${ticketId}/assign`,
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ assigned_to: userId }),
-        }
-      )
+  // const handleAssignTicket = async (ticketId: number, userId: number) => {
+  //   try {
+  //     const res = await fetch(
+  //       `${process.env.NEXT_PUBLIC_API_BASE_URL}/tickets/${ticketId}/assign`,
+  //       {
+  //         method: "PUT",
+  //         headers: { "Content-Type": "application/json" },
+  //         body: JSON.stringify({ assigned_to: userId }),
+  //       }
+  //     )
 
-      if (!res.ok) throw new Error("Failed to assign ticket")
+  //     if (!res.ok) throw new Error("Failed to assign ticket")
 
-      // Optimistic update
-      setTickets((prev: Ticket[]) =>
-        prev.map((t: Ticket) =>
-          t.id === ticketId ? { ...t, assignedTo: usersMap[userId] } : t
-        )
-      )
+  //     // Optimistic update
+  //     setTickets((prev: Ticket[]) =>
+  //       prev.map((t: Ticket) =>
+  //         t.id === ticketId ? { ...t, assignedTo: usersMap[userId] } : t
+  //       )
+  //     )
 
-      // clear local selection after save
-      setSelectedUsers(prev => ({ ...prev, [ticketId]: "" }))
+  //     // clear local selection after save
+  //     setSelectedUsers(prev => ({ ...prev, [ticketId]: "" }))
       
-    } catch (err) {
-      console.error("Error assigning ticket:", err)
-    }
-  }
+  //   } catch (err) {
+  //     console.error("Error assigning ticket:", err)
+  //   }
+  // }
 
   const fetchComments = async (ticketId: number) => {
   try {
@@ -197,11 +197,11 @@ if (processed.length > 0) {
   }
 }
 
-const toggleCard = (id: number) => {
-  const isOpen = openTickets[id] ?? false
-  setOpenTickets(prev => ({ ...prev, [id]: !isOpen }))
-  if (!isOpen) fetchComments(id) // load comments when opened
-}
+// const toggleCard = (id: number) => {
+//   const isOpen = openTickets[id] ?? false
+//   setOpenTickets(prev => ({ ...prev, [id]: !isOpen }))
+//   if (!isOpen) fetchComments(id) // load comments when opened
+// }
 
 
  const handleStatusChange = async (id: number) => {
@@ -272,33 +272,33 @@ const toggleCard = (id: number) => {
 }
 
 
-  const handleReassignTicket = async (ticketId: number, userId: number) => {
-  try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/tickets/${ticketId}/reassign`,
-      {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ new_assigned_to: userId }),
-      }
-    )
+//   const handleReassignTicket = async (ticketId: number, userId: number) => {
+//   try {
+//     const res = await fetch(
+//       `${process.env.NEXT_PUBLIC_API_BASE_URL}/tickets/${ticketId}/reassign`,
+//       {
+//         method: "PUT",
+//         headers: { "Content-Type": "application/json" },
+//         body: JSON.stringify({ new_assigned_to: userId }),
+//       }
+//     )
 
-    if (!res.ok) throw new Error("Failed to reassign ticket")
+//     if (!res.ok) throw new Error("Failed to reassign ticket")
 
-    // Optimistic update
-    setTickets((prev: Ticket[]) =>
-      prev.map((t: Ticket) =>
-        t.id === ticketId ? { ...t, assignedTo: usersMap[userId] } : t
-      )
-    )
+//     // Optimistic update
+//     setTickets((prev: Ticket[]) =>
+//       prev.map((t: Ticket) =>
+//         t.id === ticketId ? { ...t, assignedTo: usersMap[userId] } : t
+//       )
+//     )
 
-    setSelectedUsers(prev => ({ ...prev, [ticketId]: "" }))
+//     setSelectedUsers(prev => ({ ...prev, [ticketId]: "" }))
 
-      router.refresh(); // ✅ Next.js 13+ client-side refresh
-  } catch (err) {
-    console.error("Error reassigning ticket:", err)
-  }
-}
+//       router.refresh(); // ✅ Next.js 13+ client-side refresh
+//   } catch (err) {
+//     console.error("Error reassigning ticket:", err)
+//   }
+// }
 
 
   const handleFilterChange = useCallback(
@@ -404,8 +404,8 @@ const toggleCard = (id: number) => {
   ) : (
     filteredTickets.map(
       (
-        { id, title, details, date, email, assignedTo, status, createdBy, department, otherSubCategory, category, subCategory }, // ✅ include category and subCategory
-        index
+        { id, title, details,  email, assignedTo, status,  category, subCategory }, // ✅ include category and subCategory
+        
       ) => {
         const selectedUser = selectedUsers[id] || "";
         const isOpen = openTickets[id] ?? false; // ✅ first card open by default

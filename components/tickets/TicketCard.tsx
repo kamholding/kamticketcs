@@ -25,7 +25,7 @@ const TicketCard: React.FC<TicketCardProps> = ({
   ticket,
   usersMap,
   users,
-  comments,
+  // comments,
   newComment,
   setNewComment,
   fetchComments,
@@ -173,39 +173,9 @@ const TicketCard: React.FC<TicketCardProps> = ({
               </h4>
 
               <div className="space-y-4 max-h-56 overflow-y-auto border border-gray-200 rounded-lg p-4 bg-gray-50">
-                {comments?.length ? (
-                  comments.map((c, i) => (
-                    <div
-                      key={i}
-                      className={`text-sm ${
-                        (c as any).isAdmin ? "text-right" : "text-left"
-                      }`}
-                    >
-                      <p
-                        className={`font-semibold ${
-                          (c as any).isAdmin
-                            ? "text-green-600"
-                            : "text-blue-600"
-                        }`}
-                      >
-                        {(c as any).isAdmin ? "Admin" : "User"}
-                      </p>
-                      <p
-                        className={`mt-1 p-2 rounded-md shadow-sm inline-block ${
-                          (c as any).isAdmin
-                            ? "bg-green-50 text-gray-700"
-                            : "bg-white text-gray-700"
-                        }`}
-                      >
-                        {c.content}
-                      </p>
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-sm text-gray-500 italic">
-                    No comments yet.
-                  </p>
-                )}
+                
+                
+               
               </div>
 
               <div className="mt-3 flex items-center gap-2">
