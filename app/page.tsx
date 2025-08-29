@@ -1,6 +1,6 @@
 'use client';
 
-import { FiEdit, FiSearch } from 'react-icons/fi';
+import { FiEdit, FiLogIn, FiSearch } from 'react-icons/fi';
 import Link from 'next/link';
 
 export default function Home() {
@@ -33,6 +33,17 @@ export default function Home() {
             </div>
             <span className="text-lg font-semibold text-gray-800 dark:text-white">
               Track Ticket
+            </span>
+          </Link>
+          <Link
+            href="/login"
+            className="flex items-center gap-4 p-6 border rounded-2xl shadow-lg hover:shadow-xl transition-all duration-200 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700"
+          >
+            <div className="p-3 rounded-full bg-green-100 dark:bg-yellow-900 text-yellow-600 dark:text-yellow-300">
+              <FiLogIn className="w-6 h-6" />
+            </div>
+            <span className="text-lg font-semibold text-gray-800 dark:text-white">
+              Admin Login
             </span>
           </Link>
         </div>
