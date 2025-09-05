@@ -6,6 +6,12 @@ import Link from 'next/link';
 export default function Home() {
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900 font-sans">
+      {/* Header */}
+      <header className="text-center px-2 py-4 bg-gradient-to-r from-blue-100 to-blue-50 dark:from-gray-800 dark:to-gray-900">
+        <h1 className="mb-2 text-2xl sm:text-3xl font-semibold text-gray-800 dark:text-white">
+          Kam Corporate Service Helpdesk
+        </h1>
+      </header>
      
       {/* Quick Action Cards */}
       <main className="flex-1 px-6 py-16 bg-gray-50 dark:bg-gray-900">

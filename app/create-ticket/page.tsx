@@ -88,7 +88,7 @@ const CreateTicket: React.FC = () => {
 
 
 
-                 // Send confirmation email to Tosin
+                 // Send confirmation email to Me
     try {
         const emailResponse = await fetch("/api/emails", {
             method: "POST",
@@ -102,8 +102,8 @@ const CreateTicket: React.FC = () => {
                 },
                 reciepients: [
                     {
-                        name: "Tosin",
-                        address: "tosinolororo2000@gmail.com",
+                        name: "Oladapo",
+                        address: "abioyeoladapo@gmail.com",
                     },
                 ],
                 subject: `New Ticket Created by ${formData.name}`,
@@ -173,14 +173,6 @@ const CreateTicket: React.FC = () => {
         <div className="max-w-lg mx-auto p-6 bg-white shadow-md rounded-lg">
             <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
                 <h2 className="text-xl font-semibold text-gray-800">Create a New Ticket</h2>
-                <nav>
-                    <ol className="flex items-center gap-1.5">
-                        <li>
-                            <Link className="text-sm text-gray-500" href="/home">Home</Link>
-                        </li>
-                        <li className="text-sm text-gray-800">Create Ticket</li>
-                    </ol>
-                </nav>
             </div>
             <form onSubmit={handleSubmit}>
                 <InputField label="Full Name" type="text" name="name" value={formData.name} onChange={handleChange} required />
