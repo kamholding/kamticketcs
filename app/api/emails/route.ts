@@ -74,8 +74,8 @@ export async function POST(req: Request) {
       console.log(`✉️ Sending resolved email for ticket ${ticketId} to ${user.email}`);
       const response = await sendEmail({
         sender: {
-          name: "Helpdesk System",
-          address: "noreply@yourdomain.com",
+          name: "CS-Helpdesk System",
+          address: "it-helpdesk@kamholding.net",
         },
         reciepients: [
           {
