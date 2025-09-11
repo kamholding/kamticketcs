@@ -25,7 +25,7 @@ export const TicketResolvedEmail = ({
       <Text><strong>Resolved By:</strong> {resolvedBy}</Text>
     </Section>
     <Text>
-      If the issue is not fully resolved, you may reply to this ticket or reopen it via your dashboard.
+      If the issue is not fully resolved, please reach out to the staff via their details on the dashboard.
     </Text>
     <Text style={{ marginTop: "20px", fontSize: "14px", color: "#666" }}>
       Thank you for using our support service.
