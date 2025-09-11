@@ -24,7 +24,7 @@ const AddUser: React.FC = () => {
   // Authorization Check
   useEffect(() => {
     if (!authLoading) {
-      if (!user || user.role !== 'Superadmin') {
+      if (!user || user.role !== 'GM') {
         toast.error('Unauthorized access');
         router.push('/unauthorized');
       }
