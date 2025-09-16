@@ -54,7 +54,7 @@ const AddUser: React.FC = () => {
     formDataObj.append('email', formData.email);
     formDataObj.append('password', formData.password);
     formDataObj.append('role', formData.role);
-    formDataObj.append('department', formData.department || '');
+    formDataObj.append('department', formData.department);
     formDataObj.append('phone_number', formData.phone_number);
     if (formData.profile_picture) {
       formDataObj.append('profile_picture', formData.profile_picture);
@@ -132,7 +132,7 @@ const AddUser: React.FC = () => {
           <InputField label="Email Address" type="email" name="email" value={formData.email} onChange={handleChange} required />
           <InputField label="Password (Auto-set as email)" type="text" name="password" value={formData.password} readOnly />
           <SelectField label="Role" name="role" value={formData.role} onChange={handleChange} options={['Admin','GM']} required />
-          <input type="hidden" name="department" value={formData.department} readOnly />
+          <InputField type="hidden" name="department" value={formData.department} onChange={handleChange} required />
           <InputField label="Phone Number" type="text" name="phone_number" value={formData.phone_number} onChange={handleChange} required />
           <InputField label="Profile Picture" type="file" name="profile_picture" accept="image/*" onChange={handleFileChange} />
 
