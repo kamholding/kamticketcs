@@ -132,7 +132,7 @@ const AddUser: React.FC = () => {
           <InputField label="Email Address" type="email" name="email" value={formData.email} onChange={handleChange} required />
           <InputField label="Password (Auto-set as email)" type="text" name="password" value={formData.password} readOnly />
           <SelectField label="Role" name="role" value={formData.role} onChange={handleChange} options={['Admin','GM']} required />
-          <InputField type="hidden" name="department" value={formData.department} onChange={handleChange} required />
+          <SelectField label="Department" name="department" value={formData.department} onChange={handleChange} options={['Corporate-Service']} required />
           <InputField label="Phone Number" type="text" name="phone_number" value={formData.phone_number} onChange={handleChange} required />
           <InputField label="Profile Picture" type="file" name="profile_picture" accept="image/*" onChange={handleFileChange} />
 
