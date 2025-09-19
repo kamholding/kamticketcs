@@ -75,7 +75,7 @@ export async function POST(req: Request) {
       const response = await sendEmail({
         sender: {
           name: "CS-Helpdesk System",
-          address: "kamwork2019@gmail.com",
+          address: "it-helpdesk@kamholding.net",
         },
         reciepients: [
           {
