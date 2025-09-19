@@ -98,7 +98,7 @@ const CreateTicket: React.FC = () => {
             body: JSON.stringify({
                 sender: {
                     name: "Helpdesk System",
-                    address: "noreply@yourdomain.com", // use your domain's sender email
+                    address: "it-helpdesk@kamholding.net", // use your domain's sender email
                 },
                 reciepients: [
                     {

@@ -64,7 +64,7 @@ export const handleAssignUser = async ({
         body: JSON.stringify({
           sender: {
             name: "Helpdesk System",
-            address: "noreply@yourdomain.com",
+            address: "it-helpdesk@kamholding.net",
           },
           reciepients: [
             {
